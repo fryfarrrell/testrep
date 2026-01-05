@@ -32,7 +32,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
     final settings = ref.read(settingsProvider);
     final userLocation = ref.read(userLocationProvider);
 
-    Coordinates? center;
+    Coordinates center;
     if (location != null) {
       center = Coordinates(lat: location.latitude, lng: location.longitude);
       ref.read(userLocationProvider.notifier).state = center;

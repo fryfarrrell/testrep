@@ -16,7 +16,7 @@ class ListScreen extends ConsumerWidget {
     final location = ref.watch(locationProvider);
     final userLocation = ref.watch(userLocationProvider);
 
-    Coordinates? center;
+    Coordinates center;
     if (location.value != null) {
       center = Coordinates(
         lat: location.value!.latitude,

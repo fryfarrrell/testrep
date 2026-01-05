@@ -35,7 +35,7 @@ class _Route12ScreenState extends ConsumerState<Route12Screen> {
     final settings = ref.read(settingsProvider);
     final userLocation = ref.read(userLocationProvider);
 
-    Coordinates? center;
+    Coordinates center;
     if (location != null) {
       center = Coordinates(lat: location.latitude, lng: location.longitude);
     } else if (userLocation != null) {
@@ -114,7 +114,7 @@ class _Route12ScreenState extends ConsumerState<Route12Screen> {
         final estimatedTime = (totalDistance / walkingSpeed).round();
 
         if (estimatedTime >= minTime && estimatedTime <= maxTime) {
-          final diff = (estimatedTime - targetTime).abs();
+          final diff = (estimatedTime - targetTime).abs().toDouble();
           if (diff < bestDiff) {
             bestDiff = diff;
             bestRoute = WalkRoute(
@@ -199,7 +199,7 @@ class _Route12ScreenState extends ConsumerState<Route12Screen> {
     final location = ref.watch(locationProvider);
     final userLocation = ref.watch(userLocationProvider);
 
-    Coordinates? center;
+    Coordinates center;
     if (location.value != null) {
       center = Coordinates(
         lat: location.value!.latitude,
@@ -250,8 +250,8 @@ class _Route12ScreenState extends ConsumerState<Route12Screen> {
     if (_currentRoute != null && _currentRoute!.points.isNotEmpty) {
 
       Coordinates? start;
-      if (location != null) {
-        start = Coordinates(lat: location.latitude, lng: location.longitude);
+      if (location.value != null) {
+        start = Coordinates(lat: location.value!.latitude, lng: location.value!.longitude);
       } else if (userLocation != null) {
         start = userLocation;
       }
@@ -287,7 +287,7 @@ class _Route12ScreenState extends ConsumerState<Route12Screen> {
             Marker(
               markerId: MarkerId(place.id),
               position: LatLng(place.coordinates.lat, place.coordinates.lng),
-              icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueTeal),
+              icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueCyan),
               infoWindow: InfoWindow(
                 title: '${i + 1}. ${place.name}',
               ),
