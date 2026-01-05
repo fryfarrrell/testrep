@@ -31,8 +31,7 @@ class _Route12ScreenState extends ConsumerState<Route12Screen> {
   Future<void> _generateRoute() async {
     setState(() => _isGenerating = true);
 
-    final locationAsync = ref.read(locationProvider);
-    final location = await locationAsync.future;
+    final location = await ref.read(locationProvider.future);
     final settings = ref.read(settingsProvider);
     final userLocation = ref.read(userLocationProvider);
 
@@ -168,8 +167,7 @@ class _Route12ScreenState extends ConsumerState<Route12Screen> {
   Future<void> _openInAppleMaps() async {
     if (_currentRoute == null || _currentRoute!.points.isEmpty) return;
 
-    final locationAsync = ref.read(locationProvider);
-    final location = await locationAsync.future;
+    final location = await ref.read(locationProvider.future);
     final userLocation = ref.read(userLocationProvider);
 
     Coordinates? start;

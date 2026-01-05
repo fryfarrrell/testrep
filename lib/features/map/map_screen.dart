@@ -28,8 +28,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
   }
 
   Future<void> _loadPlaces() async {
-    final locationAsync = ref.read(locationProvider);
-    final location = await locationAsync.future;
+    final location = await ref.read(locationProvider.future);
     final settings = ref.read(settingsProvider);
     final userLocation = ref.read(userLocationProvider);
 
