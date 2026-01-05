@@ -18,7 +18,8 @@ final overpassApiProvider = Provider<OverpassApi>((ref) => OverpassApi());
 
 final placesRepositoryProvider = Provider<PlacesRepository>((ref) {
   final api = ref.watch(overpassApiProvider);
-  final cacheService = ref.watch(cacheServiceProvider).value;
+  final cacheServiceAsync = ref.watch(cacheServiceProvider);
+  final cacheService = cacheServiceAsync.value;
   if (cacheService == null) {
     throw Exception('Cache service not initialized');
   }
