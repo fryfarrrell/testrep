@@ -11,6 +11,11 @@ workflows:
       - name: Get dependencies
         script: |
           flutter pub get
+      - name: Create iOS project if missing
+        script: |
+          if [ ! -d "ios/Runner.xcodeproj" ]; then
+            flutter create --platforms=ios .
+          fi
       - name: Generate code
         script: |
           flutter pub run build_runner build --delete-conflicting-outputs
@@ -45,6 +50,11 @@ workflows:
       - name: Get dependencies
         script: |
           flutter pub get
+      - name: Create iOS project if missing
+        script: |
+          if [ ! -d "ios/Runner.xcodeproj" ]; then
+            flutter create --platforms=ios .
+          fi
       - name: Generate code
         script: |
           flutter pub run build_runner build --delete-conflicting-outputs
