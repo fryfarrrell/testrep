@@ -100,3 +100,54 @@ workflows:
           echo ""
           echo "Available iOS simulators:"
           xcrun simctl list devices available | grep "iPhone" | head -5 || echo "No simulators listed"
+
+  ios-browserstack-workflow:
+    name: iOS Build for BrowserStack
+    max_build_duration: 120
+    instance_type: mac_mini_m1
+    environment:
+      flutter: stable
+      xcode: latest
+      cocoapods: default
+    scripts:
+      - name: Get dependencies
+        script: |
+          flutter pub get
+      - name: Create iOS project if missing
+        script: |
+          if [ ! -d "ios/Runner.xcodeproj" ]; then
+            flutter create --platforms=ios .
+          fi
+      - name: Set iOS deployment target
+        script: |
+          if [ -f "ios/Podfile" ]; then
+            sed -i '' "s/platform :ios, '.*'/platform :ios, '14.0'/g" ios/Podfile
+            sed -i '' "s/IPHONEOS_DEPLOYMENT_TARGET'] = '.*'/IPHONEOS_DEPLOYMENT_TARGET'] = '14.0'/g" ios/Podfile
+          fi
+      - name: Generate code
+        script: |
+          flutter pub run build_runner build --delete-conflicting-outputs
+      - name: Install pods
+        script: |
+          cd ios && pod install && cd ..
+      - name: Build IPA for BrowserStack
+        script: |
+          # Build IPA without code signing (for testing on BrowserStack)
+          flutter build ipa --release --no-codesign
+          
+          # Also create .app bundle for alternative upload
+          flutter build ios --release --no-codesign
+          
+          echo "✅ Build completed"
+          echo "IPA location: build/ios/ipa/*.ipa"
+          echo "APP location: build/ios/iphoneos/Runner.app"
+    artifacts:
+      - build/ios/ipa/*.ipa
+      - build/ios/iphoneos/*.app
+    publishing:
+      email:
+        recipients:
+          - your-email@example.com
+        notify:
+          success: true
+          failure: true
