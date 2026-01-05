@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 class Coordinates {
   final double lat;
   final double lng;
@@ -16,8 +18,6 @@ class Coordinates {
       lng: lng ?? this.lng,
     );
   }
-
-import 'dart:math' as math;
 
   double distanceTo(Coordinates other) {
     const double earthRadius = 6371000;
