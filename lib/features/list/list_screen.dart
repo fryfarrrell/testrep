@@ -73,7 +73,7 @@ class ListScreen extends ConsumerWidget {
             itemCount: sortedPlaces.length,
             itemBuilder: (context, index) {
               final place = sortedPlaces[index];
-              return _buildPlaceCard(context, theme, place);
+              return _buildPlaceCard(context, theme, place, ref);
             },
           );
         },
@@ -107,7 +107,7 @@ class ListScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildPlaceCard(BuildContext context, ThemeData theme, Place place) {
+  Widget _buildPlaceCard(BuildContext context, ThemeData theme, Place place, WidgetRef ref) {
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
       child: InkWell(
