@@ -82,6 +82,9 @@ workflows:
       - name: Launch simulator
         script: |
           open -a Simulator
-          xcrun simctl list devices available | grep "iPhone"
-          xcrun simctl boot "iPhone 17 Pro Max" 2>/dev/null || xcrun simctl boot "iPhone 15 Pro Max" 2>/dev/null || echo "Simulator booted"
-          flutter run --debug
+          sleep 5
+          # Boot iPhone 17 Pro Max simulator
+          xcrun simctl boot "iPhone 17 Pro Max" 2>/dev/null || echo "Simulator already booted or boot failed"
+          sleep 3
+          # Run on specific device
+          flutter run --debug -d "iPhone 17 Pro Max"
