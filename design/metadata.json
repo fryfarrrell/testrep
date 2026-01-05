@@ -1,0 +1,7 @@
+{
+  "name": "Kasidie City Whisper",
+  "description": "A privacy-first, minimalist urban exploration tool designed to find quiet, useful places around you. Features a 12-minute walk generator and offline-first design.",
+  "requestFramePermissions": [
+    "geolocation"
+  ]
+}
