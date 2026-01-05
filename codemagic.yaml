@@ -132,15 +132,33 @@ workflows:
           cd ios && pod install && cd ..
       - name: Build IPA for BrowserStack
         script: |
-          # Build IPA without code signing (for testing on BrowserStack)
-          flutter build ipa --release --no-codesign
-          
-          # Also create .app bundle for alternative upload
+          # Build .app bundle first
           flutter build ios --release --no-codesign
           
+          # Create .ipa manually from .app (for BrowserStack)
+          APP_PATH="build/ios/iphoneos/Runner.app"
+          IPA_DIR="build/ios/ipa"
+          PAYLOAD_DIR="$IPA_DIR/Payload"
+          
+          if [ -d "$APP_PATH" ]; then
+            echo "Creating IPA from .app bundle..."
+            mkdir -p "$PAYLOAD_DIR"
+            cp -r "$APP_PATH" "$PAYLOAD_DIR/"
+            cd "$IPA_DIR"
+            zip -r "Runner.ipa" Payload
+            cd - > /dev/null
+            rm -rf "$PAYLOAD_DIR"
+            
+            echo "✅ IPA created: $IPA_DIR/Runner.ipa"
+            ls -lh "$IPA_DIR/Runner.ipa"
+          else
+            echo "❌ App bundle not found at $APP_PATH"
+            exit 1
+          fi
+          
           echo "✅ Build completed"
-          echo "IPA location: build/ios/ipa/*.ipa"
-          echo "APP location: build/ios/iphoneos/Runner.app"
+          echo "IPA location: $IPA_DIR/Runner.ipa"
+          echo "APP location: $APP_PATH"
     artifacts:
       - build/ios/ipa/*.ipa
       - build/ios/iphoneos/*.app
