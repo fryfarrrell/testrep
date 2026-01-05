@@ -79,54 +79,24 @@ workflows:
       - name: Build for simulator
         script: |
           flutter build ios --simulator --debug
-      - name: Launch simulator
+      - name: Verify simulator build
         script: |
-          # List available devices
-          echo "Available simulators:"
-          xcrun simctl list devices available | grep "iPhone" || echo "No iPhone simulators found"
+          # Verify that the simulator build was successful
+          echo "Checking simulator build..."
           
-          # Get device ID for iPhone 17 Pro Max or use first available
-          DEVICE_ID=$(xcrun simctl list devices available | grep -i "iPhone 17 Pro Max" | grep -oE '[A-F0-9-]{36}' | head -1)
-          
-          if [ -z "$DEVICE_ID" ]; then
-            # Fallback to first available iPhone
-            DEVICE_ID=$(xcrun simctl list devices available | grep "iPhone" | grep -oE '[A-F0-9-]{36}' | head -1)
-            DEVICE_NAME=$(xcrun simctl list devices available | grep "iPhone" | head -1 | sed 's/.*(\(.*\))/\1/' | tr -d '()' | xargs)
-          else
-            DEVICE_NAME="iPhone 17 Pro Max"
-          fi
-          
-          if [ -z "$DEVICE_ID" ]; then
-            echo "No iPhone simulator found, skipping launch"
-            exit 0
-          fi
-          
-          echo "Using device: $DEVICE_NAME ($DEVICE_ID)"
-          
-          # Boot simulator
-          xcrun simctl boot "$DEVICE_ID" 2>/dev/null || echo "Simulator already booted"
-          sleep 5
-          
-          # Install app (for simulator, path is different)
-          APP_PATH="build/ios/iphoneos/Runner.app"
           SIM_APP_PATH="build/ios/iphonesimulator/Runner.app"
-          
           if [ -d "$SIM_APP_PATH" ]; then
-            echo "Installing app from simulator build..."
-            xcrun simctl install "$DEVICE_ID" "$SIM_APP_PATH" || echo "Install failed or already installed"
-            echo "App installed successfully"
-          elif [ -d "$APP_PATH" ]; then
-            echo "Installing app from device build..."
-            xcrun simctl install "$DEVICE_ID" "$APP_PATH" || echo "Install failed or already installed"
-            echo "App installed successfully"
+            echo "✅ Simulator build successful: $SIM_APP_PATH"
+            echo "App size: $(du -sh "$SIM_APP_PATH" | cut -f1)"
+            echo "Build verification completed"
           else
-            echo "App bundle not found. Checking build directory..."
-            find build/ios -name "Runner.app" -type d 2>/dev/null | head -1
-            echo "Skipping installation"
+            echo "❌ Simulator build not found at $SIM_APP_PATH"
+            echo "Checking build directory..."
+            find build/ios -name "*.app" -type d 2>/dev/null || echo "No .app files found"
+            exit 1
           fi
           
-          # Launch app (optional - just verify it can be launched)
-          BUNDLE_ID="com.example.kasidieCityWhisper"
-          xcrun simctl launch "$DEVICE_ID" "$BUNDLE_ID" 2>/dev/null || echo "Launch command completed (app may already be running)"
-          
-          echo "Simulator launch completed"
+          # Optional: List available simulators for reference
+          echo ""
+          echo "Available iOS simulators:"
+          xcrun simctl list devices available | grep "iPhone" | head -5 || echo "No simulators listed"
